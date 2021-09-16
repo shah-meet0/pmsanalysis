@@ -14,8 +14,8 @@ from time import sleep
 driver_loc = r'C:\Users\Meet Shah\Desktop\Programs\chromedriver_win32\chromedriver.exe'
 
 
-def get_all_data(driver_location = driver_loc):
-    df = pd.DataFrame(columns = ['Manager Name', 'Year', 'Month', 'AUM (crs)', 'Turnover Ratio', 'Return'])
+def get_all_data(filepath, driver_location=driver_loc):
+    df = pd.DataFrame(columns=['Manager Name', 'Year', 'Month', 'AUM (crs)', 'Turnover Ratio', 'Return'])
     '''
     
     Parameters
@@ -32,36 +32,38 @@ def get_all_data(driver_location = driver_loc):
     url = 'https://www.sebi.gov.in/sebiweb/other/OtherAction.do?doPmr=yes'
     driver = webdriver.Chrome(driver_location)
     driver.get(url)
-    
+
     i = 0
-    for manager in range(2,754):
-        df.to_csv('C:/Users/Administrator/Desktop/alldata.csv')
+    for manager in range(2, 754):
+        df.to_csv(filepath)
         try:
-            current_manager = driver.find_element_by_xpath('//*[@id="2"]/div[1]/select/option['+ str(manager) +']')
+            current_manager = driver.find_element_by_xpath('//*[@id="2"]/div[1]/select/option[' + str(manager) + ']')
             current_manager_name = current_manager.text
             current_manager.click()
         except Exception:
             driver.get(url)
-            current_manager = driver.find_element_by_xpath('//*[@id="2"]/div[1]/select/option['+ str(manager) +']')
+            current_manager = driver.find_element_by_xpath('//*[@id="2"]/div[1]/select/option[' + str(manager) + ']')
             current_manager_name = current_manager.text
             current_manager.click()
-        for year in range(2,5):
+        for year in range(2, 5):
             try:
-                current_year = driver.find_element_by_xpath('//*[@id="2"]/div[2]/select/option['+ str(year) +']')
+                current_year = driver.find_element_by_xpath('//*[@id="2"]/div[2]/select/option[' + str(year) + ']')
                 current_year_name = current_year.text
                 current_year.click()
             except Exception:
                 driver.get(url)
-                current_manager = driver.find_element_by_xpath('//*[@id="2"]/div[1]/select/option['+ str(manager) +']')
+                current_manager = driver.find_element_by_xpath(
+                    '//*[@id="2"]/div[1]/select/option[' + str(manager) + ']')
                 current_manager_name = current_manager.text
                 current_manager.click()
-                current_year = driver.find_element_by_xpath('//*[@id="2"]/div[2]/select/option['+ str(year) +']')
+                current_year = driver.find_element_by_xpath('//*[@id="2"]/div[2]/select/option[' + str(year) + ']')
                 current_year_name = current_year.text
                 current_year.click()
-            for month in range(2,14):
+            for month in range(2, 14):
                 sleep(2.5)
                 try:
-                    current_month = driver.find_element_by_xpath('//*[@id="2"]/div[3]/select/option['+ str(month) +']')
+                    current_month = driver.find_element_by_xpath(
+                        '//*[@id="2"]/div[3]/select/option[' + str(month) + ']')
                     current_month_name = current_month.text
                     current_month.click()
                     driver.find_element_by_xpath('//*[@id="2"]/div[4]/div/a').click()
@@ -72,28 +74,39 @@ def get_all_data(driver_location = driver_loc):
                     except Exception:
                         driver = webdriver.Chrome(driver_location)
                     driver.get(url)
-                    current_manager = driver.find_element_by_xpath('//*[@id="2"]/div[1]/select/option['+ str(manager) +']')
+                    current_manager = driver.find_element_by_xpath(
+                        '//*[@id="2"]/div[1]/select/option[' + str(manager) + ']')
                     current_manager_name = current_manager.text
                     current_manager.click()
-                    current_year = driver.find_element_by_xpath('//*[@id="2"]/div[2]/select/option['+ str(year) +']')
+                    current_year = driver.find_element_by_xpath('//*[@id="2"]/div[2]/select/option[' + str(year) + ']')
                     current_year_name = current_year.text
                     current_year.click()
-                    current_month = driver.find_element_by_xpath('//*[@id="2"]/div[3]/select/option['+ str(month) +']')
+                    current_month = driver.find_element_by_xpath(
+                        '//*[@id="2"]/div[3]/select/option[' + str(month) + ']')
                     current_month_name = current_month.text
                     current_month.click()
                     driver.find_element_by_xpath('//*[@id="2"]/div[4]/div/a').click()
                 try:
-                    p1 = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[4]/td[11]').text)
-                    p2 = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[5]/td[11]').text)
-                    p3 = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[6]/td[11]').text)
-                    p4 = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[7]/td[11]').text)
-                    p5 = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[8]/td[11]').text)
-                    assets_under_management = p1+p2+p3+p4+p5
-                    if assets_under_management > 0 :
-                        turnover_ratio = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[6]/div/table/tbody/tr/td[3]').text)
-                        month_return = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[6]/div/table/tbody/tr/td[4]').text)
-                        df.loc[i] = (current_manager_name, current_year_name, current_month_name, assets_under_management, turnover_ratio, month_return)
-                        i = i+1
+                    p1 = float(driver.find_element_by_xpath(
+                        '//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[4]/td[11]').text)
+                    p2 = float(driver.find_element_by_xpath(
+                        '//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[5]/td[11]').text)
+                    p3 = float(driver.find_element_by_xpath(
+                        '//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[6]/td[11]').text)
+                    p4 = float(driver.find_element_by_xpath(
+                        '//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[7]/td[11]').text)
+                    p5 = float(driver.find_element_by_xpath(
+                        '//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[8]/td[11]').text)
+                    assets_under_management = p1 + p2 + p3 + p4 + p5
+                    if assets_under_management > 0:
+                        turnover_ratio = float(driver.find_element_by_xpath(
+                            '//*[@id="member-wrapper"]/section/div[6]/div/table/tbody/tr/td[3]').text)
+                        month_return = float(driver.find_element_by_xpath(
+                            '//*[@id="member-wrapper"]/section/div[6]/div/table/tbody/tr/td[4]').text)
+                        df.loc[i] = (
+                        current_manager_name, current_year_name, current_month_name, assets_under_management,
+                        turnover_ratio, month_return)
+                        i = i + 1
                     else:
                         pass
                 except Exception:
@@ -101,16 +114,16 @@ def get_all_data(driver_location = driver_loc):
                         print(current_manager_name, current_year_name, current_month_name, 'not available')
                     else:
                         pass
-                    
-    
-    df.to_csv('C:/Users/Administrator/Desktop/alldata.csv')
-    
+
+    df.to_csv(filepath)
+
     time.sleep(10)
     driver.close()
     return df
 
-def get_all_for_month(month, driver_location = driver_loc):
-    df = pd.DataFrame(columns = ['Manager Name', 'Year', 'Month', 'AUM (crs)', 'Turnover Ratio', 'Return'])
+
+def get_all_for_month(month, driver_location=driver_loc):
+    df = pd.DataFrame(columns=['Manager Name', 'Year', 'Month', 'AUM (crs)', 'Turnover Ratio', 'Return'])
     '''
     
     Parameters
@@ -127,99 +140,121 @@ def get_all_for_month(month, driver_location = driver_loc):
     Use to get data for latest months, defaults to latest year, change year = within the code to get for some other year
 
     '''
-    month_numbers = {'January': 2, 'February':3,'March':4,'April':5,'May':6, 'June':7, 'July':8, 'August':9, 'September':10, 'October':11, 'November':12, 'December':13 }
+    month_numbers = {'January': 2, 'February': 3, 'March': 4, 'April': 5, 'May': 6, 'June': 7, 'July': 8, 'August': 9,
+                     'September': 10, 'October': 11, 'November': 12, 'December': 13}
     month_number = month_numbers[month]
     year = 2
     url = 'https://www.sebi.gov.in/sebiweb/other/OtherAction.do?doPmr=yes'
     driver = webdriver.Chrome(driver_location)
     driver.get(url)
-    
+
     i = 0
-    for manager in range(2,754):
-        df.to_csv('C:/Users/Administrator/Desktop/latest' + month+ '.csv')
+    for manager in range(2, 754):
+        df.to_csv('C:/Users/Administrator/Desktop/latest' + month + '.csv')
         try:
-            current_manager = driver.find_element_by_xpath('//*[@id="2"]/div[1]/select/option['+ str(manager) +']')
+            current_manager = driver.find_element_by_xpath('//*[@id="2"]/div[1]/select/option[' + str(manager) + ']')
             current_manager_name = current_manager.text
             current_manager.click()
-            current_year = driver.find_element_by_xpath('//*[@id="2"]/div[2]/select/option['+ str(year) +']')
+            current_year = driver.find_element_by_xpath('//*[@id="2"]/div[2]/select/option[' + str(year) + ']')
             current_year_name = current_year.text
             current_year.click()
-            current_month = driver.find_element_by_xpath('//*[@id="2"]/div[3]/select/option['+ str(month_number) +']')
+            current_month = driver.find_element_by_xpath('//*[@id="2"]/div[3]/select/option[' + str(month_number) + ']')
             current_month_name = current_month.text
             current_month.click()
             driver.find_element_by_xpath('//*[@id="2"]/div[4]/div/a').click()
         except Exception:
             driver.get(url)
-            current_manager = driver.find_element_by_xpath('//*[@id="2"]/div[1]/select/option['+ str(manager) +']')
+            current_manager = driver.find_element_by_xpath('//*[@id="2"]/div[1]/select/option[' + str(manager) + ']')
             current_manager_name = current_manager.text
             current_manager.click()
-            current_year = driver.find_element_by_xpath('//*[@id="2"]/div[2]/select/option['+ str(year) +']')
+            current_year = driver.find_element_by_xpath('//*[@id="2"]/div[2]/select/option[' + str(year) + ']')
             current_year_name = current_year.text
             current_year.click()
-            current_month = driver.find_element_by_xpath('//*[@id="2"]/div[3]/select/option['+ str(month_number) +']')
+            current_month = driver.find_element_by_xpath('//*[@id="2"]/div[3]/select/option[' + str(month_number) + ']')
             current_month_name = current_month.text
             current_month.click()
             driver.find_element_by_xpath('//*[@id="2"]/div[4]/div/a').click()
-            
+
         try:
-            p1 = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[4]/td[11]').text)
-            p2 = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[5]/td[11]').text)
-            p3 = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[6]/td[11]').text)
-            p4 = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[7]/td[11]').text)
-            p5 = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[8]/td[11]').text)
-            assets_under_management = p1+p2+p3+p4+p5
-            if assets_under_management > 0 :
-                turnover_ratio = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[6]/div/table/tbody/tr/td[3]').text)
-                month_return = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[6]/div/table/tbody/tr/td[4]').text)
-                df.loc[i] = (current_manager_name, current_year_name, current_month_name, assets_under_management, turnover_ratio, month_return)
-                i = i+1
+            p1 = float(driver.find_element_by_xpath(
+                '//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[4]/td[11]').text)
+            p2 = float(driver.find_element_by_xpath(
+                '//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[5]/td[11]').text)
+            p3 = float(driver.find_element_by_xpath(
+                '//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[6]/td[11]').text)
+            p4 = float(driver.find_element_by_xpath(
+                '//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[7]/td[11]').text)
+            p5 = float(driver.find_element_by_xpath(
+                '//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[8]/td[11]').text)
+            assets_under_management = p1 + p2 + p3 + p4 + p5
+            if assets_under_management > 0:
+                turnover_ratio = float(driver.find_element_by_xpath(
+                    '//*[@id="member-wrapper"]/section/div[6]/div/table/tbody/tr/td[3]').text)
+                month_return = float(driver.find_element_by_xpath(
+                    '//*[@id="member-wrapper"]/section/div[6]/div/table/tbody/tr/td[4]').text)
+                df.loc[i] = (
+                current_manager_name, current_year_name, current_month_name, assets_under_management, turnover_ratio,
+                month_return)
+                i = i + 1
             else:
                 pass
         except Exception:
             pass
     driver.close()
-    df.to_csv('C:/Users/Administrator/Desktop/latest' + month+ '.csv')
+    df.to_csv('C:/Users/Administrator/Desktop/latest' + month + '.csv')
     return df
 
-def get_entry(manager, year, month, driver_location = driver_loc):
-    df = pd.DataFrame(columns = ['Manager Name', 'Year', 'Month', 'AUM (crs)', 'Turnover Ratio', 'Return'])
+
+def get_entry(manager, year, month, driver_location=driver_loc):
+    df = pd.DataFrame(columns=['Manager Name', 'Year', 'Month', 'AUM (crs)', 'Turnover Ratio', 'Return'])
     ''' Gets one entry and puts it on desktop as manager_year_month.csv
         Input Manager Name as manager ID(using xpath on sebipms), do the same for year.
         Month: First letter capital, STRING ONLY, full name. '''
-    month_numbers = {'January': 2, 'February':3,'March':4,'April':5,'May':6, 'June':7, 'July':8, 'August':9, 'September':10, 'October':11, 'November':12, 'December':13 }
+    month_numbers = {'January': 2, 'February': 3, 'March': 4, 'April': 5, 'May': 6, 'June': 7, 'July': 8, 'August': 9,
+                     'September': 10, 'October': 11, 'November': 12, 'December': 13}
     month_number = month_numbers[month]
     driver = webdriver.Chrome(driver_location)
     driver.get('https://www.sebi.gov.in/sebiweb/other/OtherAction.do?doPmr=yes')
-    current_manager = driver.find_element_by_xpath('//*[@id="2"]/div[1]/select/option['+ str(manager) +']')
+    current_manager = driver.find_element_by_xpath('//*[@id="2"]/div[1]/select/option[' + str(manager) + ']')
     current_manager_name = current_manager.text
     current_manager.click()
-    current_year = driver.find_element_by_xpath('//*[@id="2"]/div[2]/select/option['+ str(year) +']')
+    current_year = driver.find_element_by_xpath('//*[@id="2"]/div[2]/select/option[' + str(year) + ']')
     current_year_name = current_year.text
     current_year.click()
-    current_month = driver.find_element_by_xpath('//*[@id="2"]/div[3]/select/option['+ str(month_number) +']')
+    current_month = driver.find_element_by_xpath('//*[@id="2"]/div[3]/select/option[' + str(month_number) + ']')
     current_month_name = current_month.text
     current_month.click()
     driver.find_element_by_xpath('//*[@id="2"]/div[4]/div/a').click()
     try:
-        p1 = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[4]/td[11]').text)
-        p2 = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[5]/td[11]').text)
-        p3 = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[6]/td[11]').text)
-        p4 = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[7]/td[11]').text)
-        p5 = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[8]/td[11]').text)
-        assets_under_management = p1+p2+p3+p4+p5
-        if assets_under_management > 0 :
-            turnover_ratio = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[6]/div/table/tbody/tr/td[3]').text)
-            month_return = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[6]/div/table/tbody/tr/td[4]').text)
-            df.loc[0] = (current_manager_name, current_year_name, current_month_name, assets_under_management, turnover_ratio, month_return)
+        p1 = float(
+            driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[4]/td[11]').text)
+        p2 = float(
+            driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[5]/td[11]').text)
+        p3 = float(
+            driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[6]/td[11]').text)
+        p4 = float(
+            driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[7]/td[11]').text)
+        p5 = float(
+            driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[8]/td[11]').text)
+        assets_under_management = p1 + p2 + p3 + p4 + p5
+        if assets_under_management > 0:
+            turnover_ratio = float(
+                driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[6]/div/table/tbody/tr/td[3]').text)
+            month_return = float(
+                driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[6]/div/table/tbody/tr/td[4]').text)
+            df.loc[0] = (
+            current_manager_name, current_year_name, current_month_name, assets_under_management, turnover_ratio,
+            month_return)
         else:
-           pass
+            pass
     except Exception:
-            print('This entry is not available')
+        print('This entry is not available')
     driver.close()
-    #df.to_csv('C:/Users/Administrator/Desktop/' +current_manager_name + current_year_name + current_month_name + '.csv' )
+    # df.to_csv('C:/Users/Administrator/Desktop/' +current_manager_name + current_year_name + current_month_name + '.csv' )
     return df
 
-def get_year(manager,year, driver_location= driver_loc):
+
+def get_year(manager, year, driver_location=driver_loc):
     '''
     
 
@@ -242,42 +277,52 @@ def get_year(manager,year, driver_location= driver_loc):
     CSV on desktop with all data for a particular year for  a particular manager
 
     '''
-    df = pd.DataFrame(columns = ['Manager Name', 'Year', 'Month', 'AUM (crs)', 'Turnover Ratio', 'Return'])
+    df = pd.DataFrame(columns=['Manager Name', 'Year', 'Month', 'AUM (crs)', 'Turnover Ratio', 'Return'])
     i = 0
     driver = webdriver.Chrome(driver_location)
     driver.get('https://www.sebi.gov.in/sebiweb/other/OtherAction.do?doPmr=yes')
-    current_manager = driver.find_element_by_xpath('//*[@id="2"]/div[1]/select/option['+ str(manager) +']')
+    current_manager = driver.find_element_by_xpath('//*[@id="2"]/div[1]/select/option[' + str(manager) + ']')
     current_manager_name = current_manager.text
     current_manager.click()
-    current_year = driver.find_element_by_xpath('//*[@id="2"]/div[2]/select/option['+ str(year) +']')
+    current_year = driver.find_element_by_xpath('//*[@id="2"]/div[2]/select/option[' + str(year) + ']')
     current_year_name = current_year.text
     current_year.click()
-    for month in range(2,14):
-        current_month = driver.find_element_by_xpath('//*[@id="2"]/div[3]/select/option['+ str(month) +']')
+    for month in range(2, 14):
+        current_month = driver.find_element_by_xpath('//*[@id="2"]/div[3]/select/option[' + str(month) + ']')
         current_month_name = current_month.text
         current_month.click()
         driver.find_element_by_xpath('//*[@id="2"]/div[4]/div/a').click()
         try:
-            p1 = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[4]/td[11]').text)
-            p2 = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[5]/td[11]').text)
-            p3 = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[6]/td[11]').text)
-            p4 = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[7]/td[11]').text)
-            p5 = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[8]/td[11]').text)
-            assets_under_management = p1+p2+p3+p4+p5
-            if assets_under_management > 0 :
-                turnover_ratio = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[6]/div/table/tbody/tr/td[3]').text)
-                month_return = float(driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[6]/div/table/tbody/tr/td[4]').text)
-                df.loc[i] = (current_manager_name, current_year_name, current_month_name, assets_under_management, turnover_ratio, month_return)
-                i = i+1
+            p1 = float(driver.find_element_by_xpath(
+                '//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[4]/td[11]').text)
+            p2 = float(driver.find_element_by_xpath(
+                '//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[5]/td[11]').text)
+            p3 = float(driver.find_element_by_xpath(
+                '//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[6]/td[11]').text)
+            p4 = float(driver.find_element_by_xpath(
+                '//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[7]/td[11]').text)
+            p5 = float(driver.find_element_by_xpath(
+                '//*[@id="member-wrapper"]/section/div[4]/div/table/tbody/tr[8]/td[11]').text)
+            assets_under_management = p1 + p2 + p3 + p4 + p5
+            if assets_under_management > 0:
+                turnover_ratio = float(driver.find_element_by_xpath(
+                    '//*[@id="member-wrapper"]/section/div[6]/div/table/tbody/tr/td[3]').text)
+                month_return = float(driver.find_element_by_xpath(
+                    '//*[@id="member-wrapper"]/section/div[6]/div/table/tbody/tr/td[4]').text)
+                df.loc[i] = (
+                current_manager_name, current_year_name, current_month_name, assets_under_management, turnover_ratio,
+                month_return)
+                i = i + 1
             else:
-               pass
+                pass
         except Exception:
-                print(current_month_name + 'not available for ' + current_manager_name)
+            print(current_month_name + 'not available for ' + current_manager_name)
     driver.close()
-    #df.to_csv('C:/Users/Administrator/Desktop/' +current_manager_name + current_year_name + '.csv')
+    # df.to_csv('C:/Users/Administrator/Desktop/' +current_manager_name + current_year_name + '.csv')
     return df
 
-def manager_id_maker(driver_location = driver_loc):
+
+def manager_id_maker(driver_location=driver_loc):
     '''
     
 
@@ -291,28 +336,39 @@ def manager_id_maker(driver_location = driver_loc):
     csv with all managers and their id on desktop
 
     '''
-    dataframe = pd.DataFrame(columns = ['Manager Name','Manager ID'])
+    dataframe = pd.DataFrame(columns=['Manager Name', 'Manager ID'])
     i = 0
     manager_id = 2
     over = False
     driver = webdriver.Chrome(driver_location)
     driver.get('https://www.sebi.gov.in/sebiweb/other/OtherAction.do?doPmr=yes')
-    while over != True: 
+    while over != True:
         try:
-             current_manager = driver.find_element_by_xpath('//*[@id="2"]/div[1]/select/option['+ str(manager_id) +']')
-             current_manager_name = current_manager.text
-             dataframe.loc[i] = (current_manager_name, manager_id)
-             i = i+1
-             manager_id = int(manager_id) + 1
+            current_manager = driver.find_element_by_xpath('//*[@id="2"]/div[1]/select/option[' + str(manager_id) + ']')
+            current_manager_name = current_manager.text
+            dataframe.loc[i] = (current_manager_name, manager_id)
+            i = i + 1
+            manager_id = int(manager_id) + 1
         except Exception:
             over = True
     driver.close()
-    dataframe.set_index('Manager ID', inplace= True)
-    dataframe.to_csv('C:/Users/Administrator/Desktop/ManagerList.csv')    
+    dataframe.set_index('Manager ID', inplace=True)
+    dataframe.to_csv('C:/Users/Administrator/Desktop/ManagerList.csv')
     return None
 
-original = pd.read_csv('C:/Users/Administrator/Desktop/final pms data test.csv')
-og2 = pd.concat([original, get_entry(665,2,'April'), get_entry(665,2,'May'),get_entry(366,2,'April'), get_entry(366,2,'May'),get_entry(416,2,'April'), get_entry(416,2,'May')],ignore_index= True)
-og3 = pd.concat([og2,get_entry(324,2,'July'), get_entry(324,2,'May'),get_entry(489,2,'April'), get_entry(489,2,'May'), get_entry(489,2,'March'),get_entry(481,2,'April'), get_entry(481,2,'May'), get_entry(481,2,'March')],ignore_index=True)
-og4 = pd.concat([og3, get_year(744,4)], ignore_index = True)
-og4.to_csv('C:/Users/Administrator/Desktop/hello.csv')
+
+filepath = r'C:\Users\Meet Shah\Desktop\Programs\alldata.csv'
+get_all_data(filepath)
+
+
+
+
+# original = pd.read_csv('C:/Users/Administrator/Desktop/final pms data test.csv')
+# og2 = pd.concat([original, get_entry(665, 2, 'April'), get_entry(665, 2, 'May'), get_entry(366, 2, 'April'),
+#                  get_entry(366, 2, 'May'), get_entry(416, 2, 'April'), get_entry(416, 2, 'May')], ignore_index=True)
+# og3 = pd.concat(
+#     [og2, get_entry(324, 2, 'July'), get_entry(324, 2, 'May'), get_entry(489, 2, 'April'), get_entry(489, 2, 'May'),
+#      get_entry(489, 2, 'March'), get_entry(481, 2, 'April'), get_entry(481, 2, 'May'), get_entry(481, 2, 'March')],
+#     ignore_index=True)
+# og4 = pd.concat([og3, get_year(744, 4)], ignore_index=True)
+# og4.to_csv('C:/Users/Administrator/Desktop/hello.csv')
