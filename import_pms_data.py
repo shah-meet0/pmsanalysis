@@ -11,7 +11,7 @@ import time
 import pandas as pd
 from time import sleep
 
-driver_loc = 'C:/Users/Administrator/Desktop/chromedriver.exe'
+driver_loc = r'C:\Users\Meet Shah\Desktop\Programs\chromedriver_win32\chromedriver.exe'
 
 
 def get_all_data(driver_location = driver_loc):
