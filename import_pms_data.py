@@ -360,15 +360,3 @@ def manager_id_maker(driver_location=driver_loc):
 filepath = r'C:\Users\Meet Shah\Desktop\Programs\alldata.csv'
 get_all_data(filepath)
 
-
-
-
-# original = pd.read_csv('C:/Users/Administrator/Desktop/final pms data test.csv')
-# og2 = pd.concat([original, get_entry(665, 2, 'April'), get_entry(665, 2, 'May'), get_entry(366, 2, 'April'),
-#                  get_entry(366, 2, 'May'), get_entry(416, 2, 'April'), get_entry(416, 2, 'May')], ignore_index=True)
-# og3 = pd.concat(
-#     [og2, get_entry(324, 2, 'July'), get_entry(324, 2, 'May'), get_entry(489, 2, 'April'), get_entry(489, 2, 'May'),
-#      get_entry(489, 2, 'March'), get_entry(481, 2, 'April'), get_entry(481, 2, 'May'), get_entry(481, 2, 'March')],
-#     ignore_index=True)
-# og4 = pd.concat([og3, get_year(744, 4)], ignore_index=True)
-# og4.to_csv('C:/Users/Administrator/Desktop/hello.csv')
