@@ -104,8 +104,8 @@ def get_all_data(filepath, driver_location=driver_loc):
                         month_return = float(driver.find_element_by_xpath(
                             '//*[@id="member-wrapper"]/section/div[6]/div/table/tbody/tr/td[4]').text)
                         df.loc[i] = (
-                        current_manager_name, current_year_name, current_month_name, assets_under_management,
-                        turnover_ratio, month_return)
+                            current_manager_name, current_year_name, current_month_name, assets_under_management,
+                            turnover_ratio, month_return)
                         i = i + 1
                     else:
                         pass
@@ -193,8 +193,9 @@ def get_all_for_month(month, driver_location=driver_loc):
                 month_return = float(driver.find_element_by_xpath(
                     '//*[@id="member-wrapper"]/section/div[6]/div/table/tbody/tr/td[4]').text)
                 df.loc[i] = (
-                current_manager_name, current_year_name, current_month_name, assets_under_management, turnover_ratio,
-                month_return)
+                    current_manager_name, current_year_name, current_month_name, assets_under_management,
+                    turnover_ratio,
+                    month_return)
                 i = i + 1
             else:
                 pass
@@ -243,8 +244,8 @@ def get_entry(manager, year, month, driver_location=driver_loc):
             month_return = float(
                 driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[6]/div/table/tbody/tr/td[4]').text)
             df.loc[0] = (
-            current_manager_name, current_year_name, current_month_name, assets_under_management, turnover_ratio,
-            month_return)
+                current_manager_name, current_year_name, current_month_name, assets_under_management, turnover_ratio,
+                month_return)
         else:
             pass
     except Exception:
@@ -310,8 +311,9 @@ def get_year(manager, year, driver_location=driver_loc):
                 month_return = float(driver.find_element_by_xpath(
                     '//*[@id="member-wrapper"]/section/div[6]/div/table/tbody/tr/td[4]').text)
                 df.loc[i] = (
-                current_manager_name, current_year_name, current_month_name, assets_under_management, turnover_ratio,
-                month_return)
+                    current_manager_name, current_year_name, current_month_name, assets_under_management,
+                    turnover_ratio,
+                    month_return)
                 i = i + 1
             else:
                 pass
@@ -359,4 +361,3 @@ def manager_id_maker(driver_location=driver_loc):
 
 filepath = r'C:\Users\Meet Shah\Desktop\Programs\alldata.csv'
 get_all_data(filepath)
-

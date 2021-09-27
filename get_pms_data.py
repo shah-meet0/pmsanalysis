@@ -4,7 +4,10 @@ import time
 import pandas as pd
 from selenium.webdriver.support.ui import Select
 
-
+'''
+Module uses Selenium to scrap data from Securities and Exchanged Board of India website. 
+Potential application would be to concurrently run several classes, and then merge the output.
+'''
 
 
 class PmsImporter:
@@ -19,9 +22,18 @@ class PmsImporter:
         pass
 
     def get_all_data(self, years, filepath):
+        '''
+
+        :param years: An array containing the years for which the data is to be scrapped
+        :param filepath: Location where the obtained data will be stored.
+        :return: Dataframe containing the obtained data
+
+        NOTE: Very unstable with regards to internet connectivity, and also takes time.
+        Error handlers will show what data might be missing from final product.
+        '''
         entries = []
-        managers = self.get_manager_length()
-        for manager in range(2, managers + 1):
+        num_managers = self.get_manager_length()
+        for manager in range(2, num_managers + 1):
             for year in years:
                 for month in range(1, 13):
                     try:
@@ -38,10 +50,10 @@ class PmsImporter:
 
                         go_button = self.driver.find_element_by_xpath('//*[@id="2"]/div[4]/div/a')
                         go_button.click()
-                        data_tuple = self.get_manager_data(year, month)
+                        data_tuple = self.get_data(year, month)
                         if data_tuple[0] == 0:
                             break
-                        new_entry = [manager_name, 2021, month_name, *data_tuple]
+                        new_entry = [manager_name, int(year), month_name, *data_tuple]
                         entries.append(new_entry)
 
                     except self.NoRecordFoundException as e:
@@ -71,53 +83,104 @@ class PmsImporter:
 
     def get_data_for_month(self, month, year):
         entries = []
-        managers = self.get_manager_length()
-        for manager in range(2, managers + 1):
-            for year in years:
-                for month in range(1, 13):
-                    try:
-                        manager_select = Select(self.driver.find_element_by_xpath("//*[@id='2']/div[1]/select"))
-                        manager_select.select_by_index(manager)
-                        manager_name = manager_select.first_selected_option.text
+        num_managers = self.get_manager_length()
+        for manager in range(2, num_managers + 1):
+            try:
+                manager_select = Select(self.driver.find_element_by_xpath("//*[@id='2']/div[1]/select"))
+                manager_select.select_by_index(manager)
+                manager_name = manager_select.first_selected_option.text
 
-                        year_select = Select(self.driver.find_element_by_xpath('//*[@id="2"]/div[2]/select'))
-                        year_select.select_by_value(str(year))
+                year_select = Select(self.driver.find_element_by_xpath('//*[@id="2"]/div[2]/select'))
+                year_select.select_by_value(str(year))
 
-                        month_select = Select(self.driver.find_element_by_xpath('//*[@id="2"]/div[3]/select'))
-                        month_select.select_by_value(str(month))
-                        month_name = month_select.first_selected_option.text
+                month_select = Select(self.driver.find_element_by_xpath('//*[@id="2"]/div[3]/select'))
+                month_select.select_by_value(str(month))
+                month_name = month_select.first_selected_option.text
 
-                        go_button = self.driver.find_element_by_xpath('//*[@id="2"]/div[4]/div/a')
-                        go_button.click()
-                        data_tuple = self.get_manager_data(year, month)
-                        if data_tuple[0] == 0:
-                            break
-                        new_entry = [manager_name, 2021, month_name, *data_tuple]
-                        entries.append(new_entry)
+                go_button = self.driver.find_element_by_xpath('//*[@id="2"]/div[4]/div/a')
+                go_button.click()
+                data_tuple = self.get_data(year, month)
+                new_entry = [manager_name, int(year), month_name, *data_tuple]
+                entries.append(new_entry)
 
-                    except self.NoRecordFoundException as e:
-                        print(manager_name, str(year), month_name, e)
-                        if month >= 6:
-                            print('Skipping rest of year')
-                            break
+            except self.NoRecordFoundException as e:
+                print(manager_name, str(year), month_name, e)
 
-                    except selenium.common.exceptions.NoSuchElementException:
-                        print(str(manager), str(year), str(month), 'failed to load or does not have all data.')
-                        self.driver.refresh()
-                        self.driver.get(self.website)
+            except selenium.common.exceptions.NoSuchElementException:
+                print(str(manager), str(year), str(month), 'failed to load or does not have all data.')
+                self.driver.refresh()
+                self.driver.get(self.website)
 
-                    except Exception:
-                        # Sometimes page won't load because of buggy website, this handler will print out
-                        # when you might need to manually add a couple of entries.
-                        self.driver.refresh()
-                        self.driver.get(self.website)
-                        print(str(manager), str(month), 'had to be refreshed')
+            except Exception:
+                # Sometimes page won't load because of buggy website, this handler will print out
+                # when you might need to manually add a couple of entries.
+                self.driver.refresh()
+                self.driver.get(self.website)
+                print(str(manager), str(month), 'had to be refreshed')
+        df = pd.DataFrame(data=entries, columns=['Manager Name', 'Year', 'Month', 'AUM (crs)',
+                                                 'Turnover Ratio', 'Return'])
+        time.sleep(10)
+        self.quit()
+        return df
 
+    def get_data_for_year(self, manager: int, year):
+        entries = []
+        for month in range(1, 13):
+            try:
+                manager_select = Select(self.driver.find_element_by_xpath("//*[@id='2']/div[1]/select"))
+                manager_select.select_by_index(manager)
+                manager_name = manager_select.first_selected_option.text
+
+                year_select = Select(self.driver.find_element_by_xpath('//*[@id="2"]/div[2]/select'))
+                year_select.select_by_value(str(year))
+
+                month_select = Select(self.driver.find_element_by_xpath('//*[@id="2"]/div[3]/select'))
+                month_select.select_by_value(str(month))
+                month_name = month_select.first_selected_option.text
+
+                go_button = self.driver.find_element_by_xpath('//*[@id="2"]/div[4]/div/a')
+                go_button.click()
+                data_tuple = self.get_data(year, month)
+                new_entry = [manager_name, int(year), month_name, *data_tuple]
+                entries.append(new_entry)
+
+            except self.NoRecordFoundException as e:
+                print(manager_name, str(year), month_name, e)
+
+            except selenium.common.exceptions.NoSuchElementException:
+                print(str(manager), str(year), str(month), 'failed to load or does not have all data.')
+                self.driver.refresh()
+                self.driver.get(self.website)
+
+            except Exception:
+                # Sometimes page won't load because of buggy website, this handler will print out
+                # when you might need to manually add a couple of entries.
+                self.driver.refresh()
+                self.driver.get(self.website)
+                print(str(manager), str(month), 'had to be refreshed')
+        df = pd.DataFrame(data=entries, columns=['Manager Name', 'Year', 'Month', 'AUM (crs)',
+                                                 'Turnover Ratio', 'Return'])
+        time.sleep(10)
+        self.quit()
+        return df
 
     def get_manager_length(self):
         self.driver.get(self.website)
         select_box = Select(self.driver.find_element_by_xpath("//*[@id='2']/div[1]/select"))
         return len(select_box.options)
+
+    def manager_id_maker(self, filepath):
+        num_managers = self.get_manager_length()
+        manager_select = Select(self.driver.find_element_by_xpath("//*[@id='2']/div[1]/select"))
+        entries = []
+        options = manager_select.options
+        for i in range(2, num_managers+1):
+            # entries.append([manager_select.select_by_index(i), i])
+            entries.append([options[i-1].text, i])
+        df = pd.DataFrame(data=entries, columns= ['Manager Name', 'Manager ID'])
+        df.set_index('Manager ID', inplace= True)
+        df.to_csv(filepath)
+        return df
 
     def get_entry(self, manager: int, year, month: str, **kwargs):
         self.driver.get(self.website)
@@ -132,7 +195,7 @@ class PmsImporter:
         go_button = self.driver.find_element_by_xpath('//*[@id="2"]/div[4]/div/a')
         go_button.click()
         try:
-            data_tuple = self.get_manager_data(year, month_number)
+            data_tuple = self.get_data(year, month_number)
             entry = [[manager_name, year, month, *data_tuple]]
             df = pd.DataFrame(data=entry,
                               columns=['Manager Name', 'Year', 'Month', 'AUM (crs)', 'Turnover Ratio', 'Return'])
@@ -143,7 +206,7 @@ class PmsImporter:
         except Exception as e:
             print(manager_name, year, month, e)
 
-    def get_manager_data(self, year, month):
+    def get_data(self, year, month):
         nrf = 'No Records Found.'
         if self.driver.find_element_by_xpath('//*[@id="member-wrapper"]/section/div[3]').text == nrf:
             raise self.NoRecordFoundException(nrf)
