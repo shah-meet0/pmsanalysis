@@ -82,6 +82,8 @@ class PmsImporter:
         return df
 
     def get_data_for_month(self, month, year):
+        if isinstance(month, str):
+            month = self.months[month]
         entries = []
         num_managers = self.get_manager_length()
         for manager in range(2, num_managers + 1):
@@ -182,9 +184,10 @@ class PmsImporter:
         df.to_csv(filepath)
         return df
 
-    def get_entry(self, manager: int, year, month: str, **kwargs):
+    def get_entry(self, manager: int, year, month, **kwargs):
         self.driver.get(self.website)
-        month_number = self.months[month]
+        if isinstance(month, str):
+            month_number = self.months[month]
         manager_select = Select(self.driver.find_element_by_xpath("//*[@id='2']/div[1]/select"))
         manager_select.select_by_index(manager)
         manager_name = manager_select.first_selected_option.text
