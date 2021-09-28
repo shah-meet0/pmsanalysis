@@ -13,14 +13,19 @@ class PmsCleaner:
 
     @staticmethod
     def change_date_format(date):
-        return datetime.strftime(date, '%Y/%m/%d')
+        return datetime.strftime(date, '%Y-%m-%d')
+
+
+    def change_data_format(self):
+        self.df['Date'] = pd.to_datetime(self.df['Date'], format='%d-%m-%Y')
+        self.df['Date'] = self.df['Date'].apply(PmsCleaner.change_date_format)
 
     def reformat_data_csv(self):
         self.df['Month'] = self.df['Month'].apply(PmsCleaner.change_month_format)
         self.df['Date'] = pd.to_datetime(100*self.df['Year']+self.df['Month'], format='%Y%m') + MonthEnd(1)
+        self.df['Date'] = self.df['Date'].apply(PmsCleaner.change_date_format)
         self.df.set_index('Date', inplace=True)
         self.df.drop(columns=['Unnamed: 0', 'Year', 'Month'], inplace=True)
-        self.df['Date'] = self.df['Date'].apply(PmsCleaner.change_date_format)
         self.df.sort_index()
         return self.df
 
