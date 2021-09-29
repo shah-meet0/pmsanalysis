@@ -2,7 +2,8 @@ import pandas as pd
 from datetime import datetime
 from pandas.tseries.offsets import MonthEnd
 
- #Needs documentation
+
+# Needs documentation
 class PmsCleaner:
 
     def __init__(self, filepath):
