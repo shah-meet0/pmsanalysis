@@ -8,11 +8,29 @@ class PmsCleaner:
 
     def __init__(self, filepath):
         self.df = pd.read_csv(filepath)
+        self.df['Date'] = pd.to_datetime(self.df['Date'], format='%Y-%m-%d')
+        self.df.set_index('Date', inplace= True)
 
     def get_relevant_managers(self, year, entries):
+        managers = self.df['Manager Name'].unique()
+        for manager in managers:
+            manager_entries = self.df[self.df['Manager Name'] == manager]
+            if manager_entries.shape[0] < entries or manager_entries.last_valid_index().year < year:
+                self.df = self.df[self.df['Manager Name'] != manager]
+
+    def remove_abnormal_returns(self, return_threshold, sensitivity):
+        abnormal_returns = self.df[abs(self.df['Return']) >= return_threshold]
+        abnormal_managers = abnormal_returns['Manager Name'].unique()
+        for manager in abnormal_managers:
+            number_entries = len(abnormal_returns[abnormal_returns['Manager Name'] == manager])
+            if number_entries > sensitivity:
+                self.df = self.df[self.df['Manager Name'] != manager]
+
+    def find_missing_dates(self, start_year, start_month, end_year, end_month):
         pass
 
-    def find_missing_dates(self):
+    def attach_index_return(self, index_returns_path):
+        pd.read_csv(index_returns_path)
         pass
 
     def print_csv(self, filepath):

@@ -1,6 +1,8 @@
 import math
 
 import pandas as pd
+import numpy as np
+from numpy import transpose as t
 
 # Many of these functions are natively implemented on Pandas, and those should be used
 # Instead of the ones written here.
@@ -69,8 +71,43 @@ def annualized_return(returns: pd.Series, in_percent=False):
     else:
         return money_turned_into ** (12/number_months) - 1
 
+
 # Assumes monthly data
 def annualized_volatility(returns: pd.Series):
     std = standard_deviation(returns)
 
     return std * math.sqrt(12)
+
+def sharpe_ratio(returns: pd.Series, risk_free_rate):
+    pass
+
+
+def get_beta_estimate(returns: pd.Series, index_returns: pd.Series, rf, include_intercept=True):
+    n = len(returns)
+    n2 = len(index_returns)
+    print(index_returns)
+    index_returns = index_returns - rf
+    print(index_returns)
+    y = np.array([returns])
+    y = y - rf
+    if not n == n2:
+        raise ValueError('Input same length of returns and index_returns')
+    if include_intercept:
+        ones = np.array([1 for i in range(n)])
+        x = np.array([ones, index_returns])
+    else:
+        x = np.array([index_returns])
+    x = t(x)
+    y = t(y)
+    print(y)
+    xtx = np.matmul(t(x), x)
+    xtxinv = np.linalg.inv(xtx)
+    xty = np.matmul(t(x), y)
+    beta = np.matmul(xtxinv, xty)
+    res = y - np.matmul(x, beta)
+    return beta, res
+
+
+def normalize(series: pd.Series):
+    norm_series = (series - mean(series))/standard_deviation(series)
+    return norm_series
