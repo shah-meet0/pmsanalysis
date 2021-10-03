@@ -34,7 +34,7 @@ class PmsAnalyser:
         :param risk_free_rate: risk_free_rate estimate (annualized), and not in percent
         :return: dictionary containing manager name and estimated CAPM beta
         """
-
+        monthly_risk_free_rate = (1 + risk_free_rate) ** (1/12) - 1
         index_returns = pd.read_csv(filepath_to_index_returns)
         index_returns['Date'] = pd.to_datetime(index_returns['Date']) + MonthEnd(1)
         index_returns.set_index('Date', inplace=True)
@@ -42,9 +42,9 @@ class PmsAnalyser:
         betas = {}
         for manager in managers:
             manager_df = self.get_index_returns_for_dates(manager, index_returns)
-            beta_calc = rm.get_beta_estimate(manager_df['Return'], manager_df['Index Return'], risk_free_rate)
-            betas[manager] = beta_calc[0]
-        print(betas)
+            beta_calc = rm.get_beta_estimate(manager_df['Return'], manager_df['Index Return'], monthly_risk_free_rate)
+            betas[manager] = beta_calc[0][0][0]
+            print(betas)
         return betas
 
     def get_index_returns_for_dates(self, manager, index_returns):

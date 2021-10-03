@@ -75,11 +75,13 @@ def annualized_return(returns: pd.Series, in_percent=False):
 # Assumes monthly data
 def annualized_volatility(returns: pd.Series):
     std = standard_deviation(returns)
-
     return std * math.sqrt(12)
 
-def sharpe_ratio(returns: pd.Series, risk_free_rate):
-    pass
+
+def sharpe_ratio(returns: pd.Series, risk_free_rate=0.0624):
+    ar = annualized_return(returns)
+    std = annualized_volatility(returns)
+    return (ar - risk_free_rate)/std
 
 
 def get_beta_estimate(returns: pd.Series, index_returns: pd.Series, rf, include_intercept=False):
