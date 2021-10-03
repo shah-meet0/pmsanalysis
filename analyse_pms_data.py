@@ -44,7 +44,6 @@ class PmsAnalyser:
             manager_df = self.get_index_returns_for_dates(manager, index_returns)
             beta_calc = rm.get_beta_estimate(manager_df['Return'], manager_df['Index Return'], monthly_risk_free_rate)
             betas[manager] = beta_calc[0][0][0]
-            print(betas)
         return betas
 
     def get_index_returns_for_dates(self, manager, index_returns):
@@ -54,6 +53,29 @@ class PmsAnalyser:
                               right_index=True)
         manager_df.dropna(inplace=True)
         return manager_df
+
+    def get_analysed_df(self, filepath_to_index_returns):
+        entries = []
+        columns = ['Manager Name', 'Entries', 'Annualized Return', 'Annualized Volatility', 'Skewness', 'Kurtosis',
+                   'Estimated Beta', 'Sharpe Ratio']
+        betas = self.get_beta_estimates(filepath_to_index_returns)
+        managers = self.df['Manager Name'].unique()
+
+        for manager in managers:
+            manager_df = self.df[self.df['Manager Name'] == manager]
+            manager_returns = manager_df['Return']
+            num_entries = manager_df.shape[0]
+            ann_ret = rm.annualized_return(manager_returns)
+            ann_vol = rm.annualized_volatility(manager_returns)
+            skewness = rm.skewness(manager_returns)
+            kurtosis = rm.kurtosis(manager_returns)
+            est_beta = betas[manager]
+            sharpe_rat = rm.sharpe_ratio(manager_returns)
+            entry = [manager, num_entries, ann_ret, ann_vol, skewness, kurtosis, est_beta, sharpe_rat]
+            entries.append(entry)
+
+        analysed_df = pd.DataFrame(data=entries, columns=columns)
+        return analysed_df
 
 
 class PmsCleaner:
