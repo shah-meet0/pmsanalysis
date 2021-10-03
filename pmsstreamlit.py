@@ -16,7 +16,6 @@ def read_files():
     return analysed_data, full_data, nifty_returns
 
 
-
 (analysed_data, full_data, nifty_returns) = read_files()
 
 st.markdown(
