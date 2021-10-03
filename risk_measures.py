@@ -82,12 +82,10 @@ def sharpe_ratio(returns: pd.Series, risk_free_rate):
     pass
 
 
-def get_beta_estimate(returns: pd.Series, index_returns: pd.Series, rf, include_intercept=True):
+def get_beta_estimate(returns: pd.Series, index_returns: pd.Series, rf, include_intercept=False):
     n = len(returns)
     n2 = len(index_returns)
-    print(index_returns)
     index_returns = index_returns - rf
-    print(index_returns)
     y = np.array([returns])
     y = y - rf
     if not n == n2:
@@ -99,7 +97,6 @@ def get_beta_estimate(returns: pd.Series, index_returns: pd.Series, rf, include_
         x = np.array([index_returns])
     x = t(x)
     y = t(y)
-    print(y)
     xtx = np.matmul(t(x), x)
     xtxinv = np.linalg.inv(xtx)
     xty = np.matmul(t(x), y)
