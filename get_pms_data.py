@@ -33,7 +33,7 @@ class PmsImporter:
         '''
         entries = []
         num_managers = self.get_manager_length()
-        for manager in range(2, num_managers + 1):
+        for manager in range(2, 10): # num_managers+1
             for year in years:
                 for month in range(1, 13):
                     try:
