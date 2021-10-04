@@ -78,6 +78,7 @@ class PmsAnalyser:
         return analysed_df
 
 
+
 class PmsCleaner:
 
     def __init__(self, filepath, date_format='%B %Y'):
@@ -120,17 +121,20 @@ class PmsCleaner:
         missing_dates = []
         for date in dates:
             if date not in df.index:
-                missing_dates.append(datetime.strftime(date, '%Y-%m-%d'))
+                missing_dates.append(date)
         return missing_dates
 
-    def make_missing_dates_dict(self):
-        managers = self.df['Manager Name'].unique()
-        missing_dates_dict = {}
+    @staticmethod
+    def make_missing_dates_df(df):
+        managers = df['Manager Name'].unique()
+        entries = []
         for manager in managers:
-            manager_df = self.df[self.df['Manager Name'] == manager]
+            manager_df = df[df['Manager Name'] == manager]
             missing_dates = PmsCleaner.find_missing_dates(manager_df)
-            missing_dates_dict[manager] = missing_dates
-        return missing_dates_dict
+            entries.append([manager, missing_dates])
+        missing_dates_df = pd.DataFrame(data=entries, columns=['Manager Name', 'Missing Dates'])
+        missing_dates_df.set_index('Manager Name', inplace=True)
+        return missing_dates_df
 
     def print_csv(self, filepath):
         self.df.sort_index(inplace=True)
