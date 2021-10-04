@@ -30,19 +30,19 @@ def parse_nifty_returns():
 (analysed_data, full_data) = read_data_files()
 (index_returns, index_wealth) = parse_nifty_returns()
 
-st.markdown(
-    """
-    <style>
-    .reportview-container {
-        background: white
-    }
-   .sidebar .sidebar-content {
-        background: grey
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+# st.markdown(
+#     """
+#     <style>
+#     .reportview-container {
+#         background: white
+#     }
+#    .sidebar .sidebar-content {
+#         background: grey
+#     }
+#     </style>
+#     """,
+#     unsafe_allow_html=True
+# )
 st.title("Portfolio Management Service Analysis")
 st.write("By Meet Shah")
 list_of_managers = [manager for manager in analysed_data.index.unique()]
