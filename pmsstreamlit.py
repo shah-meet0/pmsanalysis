@@ -1,3 +1,5 @@
+import datetime
+
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -55,15 +57,55 @@ def on_manager_selection(manager_selected, _analysed_data, _monthly_data, index_
     manager_beta = manager_brief['Estimated Beta']
     missing_dates = missing_dates_df.loc[manager]['Missing Dates']
     est_returns = estimate_missing_dates(manager_long, missing_dates, index_returns, manager_beta)
-    fig_rw = plt.figure(1)
-    plt.plot(est_returns.index, est_returns, label='Manager Returns')
-    plt.plot(index_returns, label='Index Returns')
-    plt.gca().set_xlim((date(2018, 1, 31), date(2021, 10, 31)))
+    joint_wealth_df = make_wealth_indexes(index_returns, est_returns)
+    fig_r = plt.figure(1)
+    plt.plot(est_returns.index, est_returns*100, label='Manager Returns')
+    plt.plot(index_returns*100, label='Index Returns')
+    plt.gca().set_xlim(est_returns.first_valid_index(), date(2021, 9, 30))
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b %y'))
-    plt.gca().set_ylabel('Return')
+    for label in plt.gca().xaxis.get_ticklabels()[1:-1:2]:
+        label.set_visible(False)
+    plt.gca().set_ylabel('Return %')
     plt.legend()
-    st.pyplot(fig_rw)
+
+    fig_w = plt.figure(2)
+    start_date = joint_wealth_df.first_valid_index()
+    end_date = joint_wealth_df.last_valid_index()
+    plt.plot(joint_wealth_df.index, joint_wealth_df['Manager Wealth'], label='Manager Wealth Evolution')
+    plt.plot(joint_wealth_df.index, joint_wealth_df['Index Wealth'], label='Index Wealth Evolution')
+    plt.gca().set_xlim(start_date, date(2021,9,30))
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b %y'))
+    for label in plt.gca().xaxis.get_ticklabels()[1:-1:2]:
+        label.set_visible(False)
+    plt.gca().set_ylabel('Wealth')
+    plt.legend()
+
+    end_wealth_index = round(joint_wealth_df.loc[end_date]['Index Wealth'],2)
+    end_wealth_pms = round(joint_wealth_df.loc[end_date]['Manager Wealth'],2)
+    start_date_formatted = datetime.datetime.strftime(start_date, '%b %Y')
+    end_date_formatted = datetime.datetime.strftime(end_date, '%b %Y')
+
+    st.pyplot(fig_r)
+    st.pyplot(fig_w)
+    st.write(f'From {start_date_formatted} to {end_date_formatted}:')
+    st.write(f'Manager would have taken Rupees 1000 to Rupees {end_wealth_pms}')
+    st.write(f'While Nifty 500 would have taken Rupees 1000 to Rupees {end_wealth_index}')
     st.dataframe(manager_long)
+
+
+@st.cache
+def make_wealth_indexes(index_returns, est_returns):
+    entries = []
+    index_wealth = 1000
+    pms_wealth = 1000
+    for index, ret in est_returns.iteritems():
+        index_wealth *= (index_returns[index] + 1)
+        pms_wealth *= (ret + 1)
+        entries.append([index, index_wealth, pms_wealth])
+    joint_wealth = pd.DataFrame(data=entries, columns=['Date', 'Index Wealth', 'Manager Wealth'])
+    joint_wealth.set_index('Date', inplace=True)
+    joint_wealth.sort_index(inplace=True)
+    return joint_wealth
 
 
 (analysed_data, list_of_managers) = read_analysed_data()
