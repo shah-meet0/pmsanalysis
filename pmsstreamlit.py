@@ -136,7 +136,7 @@ if manager == 'All':
         st.title('Data Source')
         st.write('Notes:')
         st.write('All data has been obtained from the Securities and Exchange Board of India')
-        st.write('sebi.gov.in/sebiweb/other/OtherAction.do?doPmr=yes')
+        st.write('https://sebi.gov.in/sebiweb/other/OtherAction.do?doPmr=yes')
         st.write('Only discretionary services were taken into account')
 
     if data_processing_flag:
