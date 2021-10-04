@@ -51,6 +51,17 @@ manager = st.sidebar.selectbox('Manager', ['All'] + list_of_managers)
 if manager == 'All':
     st.write("Click on column header to sort by it")
     st.dataframe(analysed_data.style.background_gradient(cmap='Blues', axis=0).format(precision=3))
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+
+    ax1.hist(analysed_data['Annualized Return']*100, color='Red')
+    ax1.set_title('Annualized Return (%)')
+    ax1.set_xlim((-50, 51))
+    ax1.set_ylabel('Frequency')
+
+    ax2.hist(analysed_data['Annualized Volatility'] * 100)
+    ax2.set_title('Annualized Volatility (%)')
+
+    st.pyplot(fig)
     st.write('All data has been obtained from the Securities and Exchange Board of India. '
              'There are sometimes mistakes done by them in data collection, which affects the statistics presented.'
              'I have removed some obvious outliers, but there still might be mistakes. Please keep this in mind when '
