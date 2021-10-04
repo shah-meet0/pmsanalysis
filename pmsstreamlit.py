@@ -7,8 +7,10 @@ import analyse_pms_data as apd
 from pandas.tseries.offsets import MonthEnd
 import matplotlib.dates as mdates
 from datetime import date
-
+plt.rcParams['axes.facecolor'] = '#F0F0F5'
+plt.rcParams['figure.facecolor'] = '#F0F0F5'
 st.set_page_config(page_title='PMS Analysis')
+
 
 @st.cache
 def read_analysed_data():
