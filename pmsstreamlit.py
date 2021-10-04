@@ -5,18 +5,30 @@ from datetime import datetime
 
 
 @st.cache
-def read_files():
+def read_data_files():
     analysed_data = pd.read_csv('./Resources/pms_data_analysed_sept_2021.csv')
     analysed_data.drop(columns='Unnamed: 0', inplace=True)
     analysed_data.set_index('Manager Name', inplace=True)
     full_data = pd.read_csv('./Resources/pms_data_cleaned_final_sept_2021.csv')
     # full_data['Date'] = pd.to_datetime(full_data['Date'], format ='%B %Y')
     # full_data.set_index('Date', inplace=True)
+
+    return analysed_data, full_data
+
+
+@st.cache
+def parse_nifty_returns():
     nifty_returns = pd.read_csv('./Resources/Nifty_Returns_2018_2021.csv')
-    return analysed_data, full_data, nifty_returns
+    index_returns = nifty_returns['Index Return']
+    wealth_evolution = [1000]
+    for index, return_value in index_returns.iteritems():
+        wealth_evolution.append(wealth_evolution[-1] * (1 + return_value))
+    wealth_evolution = wealth_evolution[1:-2]
+    return index_returns, wealth_evolution
 
 
-(analysed_data, full_data, nifty_returns) = read_files()
+(analysed_data, full_data) = read_data_files()
+(index_returns, index_wealth) = parse_nifty_returns()
 
 st.markdown(
     """
@@ -54,9 +66,18 @@ else:
     length = manager_long.shape[0]
     for i in range(1, length):
         wealth.append(wealth[-1] * (1 + (manager_long['Return'].iloc[i])))
-    fig, axs = plt.subplots()
-    plt.plot(manager_long['Date'], wealth)
+    fig = plt.figure(1)
+    plt.plot(wealth, label='Manager Wealth')
+    plt.plot(index_wealth, label='Index Wealth')
+    plt.xlabel('Date')
+    plt.ylabel('Wealth')
+    plt.legend()
+    st.pyplot(fig)
+    fig2 = plt.figure(2)
+    plt.plot(manager_long['Return'],label ='Manager Return')
+    plt.plot(index_returns, label = 'Index Return')
+    plt.legend()
     d1 = manager_long['Date'].iloc[0]
     d2 = manager_long['Date'].iloc[-1]
-    st.pyplot(fig)
+    st.pyplot(fig2)
     st.write('From ' + d1 + ' to ' + d2 + ', Rupees 1000 would become Rupees ' + "{:.2f}".format(wealth[-1]))
