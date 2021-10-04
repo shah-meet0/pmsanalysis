@@ -8,6 +8,7 @@ from pandas.tseries.offsets import MonthEnd
 import matplotlib.dates as mdates
 from datetime import date
 
+st.set_page_config(page_title='PMS Analysis')
 
 @st.cache
 def read_analysed_data():
@@ -122,6 +123,7 @@ def make_wealth_indexes(index_returns, est_returns):
 index_returns = parse_nifty_returns()
 
 # *****************************Start of App***************************** #
+
 
 manager = st.sidebar.selectbox('Manager', ['All'] + list_of_managers)
 if manager == 'All':
