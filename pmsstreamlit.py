@@ -97,6 +97,10 @@ def on_manager_selection(manager_selected, _analysed_data, _monthly_data, index_
     st.write(f'While Nifty 500 would have taken Rupees 1000 to Rupees {end_wealth_index}.')
     st.dataframe(manager_long)
 
+    st.write(f'WARNING: Wealth evolution and Returns both have forecasts from Sep 2020 to Mar 2021.')
+    st.write(f'This forecast is not taken into account in the statistics calculated, but does affect'
+             f' graphs and wealth evolution')
+
 
 @st.cache
 def make_wealth_indexes(index_returns, est_returns):
