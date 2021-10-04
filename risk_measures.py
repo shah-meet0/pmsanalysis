@@ -59,17 +59,18 @@ def annualized_return(returns: pd.Series, in_percent=False):
     if in_percent:
         returns_to_use = returns/100
     else:
-        returns_to_use = returns/1
+        returns_to_use = returns
 
     number_months = len(returns)
+    print(number_months)
     money_turned_into = 1
     for index, month_return in returns_to_use.iteritems():
         money_turned_into *= (1+month_return)
 
     if in_percent:
-        return 100 * (money_turned_into ** (12/number_months) - 1)
+        return 100 * ((money_turned_into ** (12/number_months)) - 1)
     else:
-        return money_turned_into ** (12/number_months) - 1
+        return (money_turned_into ** (12/number_months)) - 1
 
 
 # Assumes monthly data
