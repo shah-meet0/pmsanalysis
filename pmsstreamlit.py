@@ -9,11 +9,13 @@ def read_data_files():
     analysed_data = pd.read_csv('./Resources/pms_data_analysed_sept_2021.csv')
     analysed_data.drop(columns='Unnamed: 0', inplace=True)
     analysed_data.set_index('Manager Name', inplace=True)
+    analysed_data.sort_index(inplace=True)
+    list_of_managers = [manager_name for manager_name in analysed_data.index.unique()]
     full_data = pd.read_csv('./Resources/pms_data_cleaned_final_sept_2021.csv')
     # full_data['Date'] = pd.to_datetime(full_data['Date'], format ='%B %Y')
     # full_data.set_index('Date', inplace=True)
 
-    return analysed_data, full_data
+    return analysed_data, full_data, list_of_managers
 
 
 @st.cache
@@ -27,7 +29,7 @@ def parse_nifty_returns():
     return index_returns, wealth_evolution
 
 
-(analysed_data, full_data) = read_data_files()
+(analysed_data, full_data, list_of_managers) = read_data_files()
 (index_returns, index_wealth) = parse_nifty_returns()
 
 # st.markdown(
@@ -45,8 +47,7 @@ def parse_nifty_returns():
 # )
 st.title("Portfolio Management Service Analysis")
 st.write("By Meet Shah")
-list_of_managers = [manager for manager in analysed_data.index.unique()]
-list_of_managers.sort()
+
 manager = st.sidebar.selectbox('Manager', ['All'] + list_of_managers)
 if manager == 'All':
     st.write("Click on column header to sort by it")
@@ -60,6 +61,8 @@ if manager == 'All':
 
     ax2.hist(analysed_data['Annualized Volatility'] * 100)
     ax2.set_title('Annualized Volatility (%)')
+
+    fig.set_facecolor('#91878a')
 
     st.pyplot(fig)
     st.write('All data has been obtained from the Securities and Exchange Board of India. '
