@@ -15,6 +15,8 @@ def read_analysed_data():
     analysed_data.drop(columns='Unnamed: 0', inplace=True)
     analysed_data.set_index('Manager Name', inplace=True)
     analysed_data.sort_index(inplace=True)
+    analysed_data = analysed_data.rename(columns={'Annualized Return': 'Ann_Ret', 'Annualized Volatility': 'Ann_Vol',
+                                   'Estimated Beta': 'Est_Beta'})
     list_of_managers = [manager_name for manager_name in analysed_data.index.unique()]
     return analysed_data, list_of_managers
 
@@ -50,7 +52,10 @@ def estimate_missing_dates(manager_df, missing_dates_for_manager, index_return, 
     return final_returns
 
 def on_manager_selection(manager_selected, _analysed_data, _monthly_data, index_returns):
+    st.title(manager_selected)
     manager_brief = _analysed_data.loc[manager_selected]
+    manager_brief = manager_brief.rename({'Ann_Ret': 'Annualized Return', 'Ann_Vol': 'Annualized Volatility',
+                                  'Est_Beta': 'Estimated Beta'})
     manager_long = _monthly_data[_monthly_data['Manager Name'] == manager_selected]
     manager_long.reset_index(inplace=True, drop=True)
     st.table(manager_brief)
@@ -88,8 +93,8 @@ def on_manager_selection(manager_selected, _analysed_data, _monthly_data, index_
     st.pyplot(fig_r)
     st.pyplot(fig_w)
     st.write(f'From {start_date_formatted} to {end_date_formatted}:')
-    st.write(f'Manager would have taken Rupees 1000 to Rupees {end_wealth_pms}')
-    st.write(f'While Nifty 500 would have taken Rupees 1000 to Rupees {end_wealth_index}')
+    st.write(f'Manager would have taken Rupees 1000 to Rupees {end_wealth_pms}.')
+    st.write(f'While Nifty 500 would have taken Rupees 1000 to Rupees {end_wealth_index}.')
     st.dataframe(manager_long)
 
 
@@ -112,42 +117,69 @@ def make_wealth_indexes(index_returns, est_returns):
 (monthly_data, indexed_monthly_data, missing_dates_df) = read_monthly_data()
 index_returns = parse_nifty_returns()
 
-# st.markdown(
-#     """
-#     <style>
-#     .reportview-container {
-#         background: white
-#     }
-#    .sidebar .sidebar-content {
-#         background: grey
-#     }
-#     </style>
-#     """,
-#     unsafe_allow_html=True
-# )
-st.title("Portfolio Management Service Analysis")
-st.write("By Meet Shah")
+# *****************************Start of App***************************** #
 
 manager = st.sidebar.selectbox('Manager', ['All'] + list_of_managers)
 if manager == 'All':
-    st.write("Click on column header to sort by it")
-    st.dataframe(analysed_data.style.background_gradient(cmap='Blues', axis=0).format(precision=3))
-    fig, (ax1, ax2) = plt.subplots(1, 2)
 
-    ax1.hist(analysed_data['Annualized Return'] * 100, color='Red')
-    ax1.set_title('Annualized Return (%)')
-    ax1.set_xlim((-50, 51))
-    ax1.set_ylabel('Frequency')
+    data_source_flag = st.sidebar.checkbox(label='Give Data Source.')
+    data_processing_flag = st.sidebar.checkbox(label='More Info on Data Processing.')
+    data_validity_flag = st.sidebar.checkbox(label='More Info on Data Validity.')
+    hide_data_flag = st.sidebar.checkbox(label='Hide Data.')
+    contact_me_flag = st.sidebar.checkbox(label='About Me.')
 
-    ax2.hist(analysed_data['Annualized Volatility'] * 100)
-    ax2.set_title('Annualized Volatility (%)')
+    if data_source_flag:
+        st.title('Data Source')
+        st.write('Notes:')
+        st.write('All data has been obtained from the Securities and Exchange Board of India')
+        st.write('sebi.gov.in/sebiweb/other/OtherAction.do?doPmr=yes')
+        st.write('Only discretionary services were taken into account')
 
-    fig.set_facecolor('#91878a')
+    if data_processing_flag:
+        st.title('Data Processing')
+        st.write('All data has been processed in Python.')
+        st.write('Where needed, risk free rate was taken as 6.24%, the 10 year government bond yield at time of writing')
+        st.write('SEBI lists over 900 portfolio management services. Some of these are duplicated entries.')
+        st.write('Most of the managers have not reported data in 2021, this app only considers those which have.')
+        st.write('Managers with over 20% return for more than 4 months have been removed. '
+                 'These were generally incorrect entries.')
+        st.write('SEBI stopped reporting returns from September 2020 to March 2021. Returns for these times have '
+                 'been estimated using CAPM')
+        st.write('Processing functions and data are openly available at')
+        st.write('https://github.com/shah-meet0/pmsanalysis')
 
-    st.pyplot(fig)
-    st.write('All data has been obtained from the Securities and Exchange Board of India. '
-             'There are sometimes mistakes done by them in data collection, which affects the statistics presented.'
-             'I have removed some obvious outliers, but there still might be mistakes. Please keep this in mind when '
-             'viewing say the highest annualized return.')
+    if data_validity_flag:
+        st.title('Data Validity')
+        st.write('SEBI most likely has some incorrect data. For instance, India Bulls Asset Management was '
+                 'reported to have nearly 8% return every month in 2018, which is not what their website reports.')
+        st.write('As such take some data (especially those with higher annualized return) with a grain of salt')
+        st.write('Also, floating point errors cause some imprecision in wealth calculation.')
+
+    if contact_me_flag:
+        st.title('About Me')
+        st.write('Hi! I am Meet Shah!')
+        st.write('I am an Econometrics and Mathematical Economics Student at LSE.')
+        st.write('To contact me with suggestions or desired features, please use the following email address:')
+        st.write('meetsamshah@gmail.com')
+
+    if not hide_data_flag:
+        st.title("Portfolio Management Services")
+        st.write('An investment instrument in India')
+        st.write("Click on column header to sort by it")
+        st.dataframe(analysed_data.style.background_gradient(cmap='gist_gray', axis=0).format(precision=3))
+        fig, (ax1, ax2) = plt.subplots(1, 2)
+
+        ax1.hist(analysed_data['Ann_Ret'] * 100, color='Red')
+        ax1.set_title('Annualized Return (%)')
+        ax1.set_xlim((-50, 51))
+        ax1.set_ylabel('Frequency')
+
+        ax2.hist(analysed_data['Ann_Vol'] * 100)
+        ax2.set_title('Annualized Volatility (%)')
+
+        fig.set_facecolor('#F0F0F5')
+
+        st.pyplot(fig)
+
 else:
     on_manager_selection(manager, analysed_data, monthly_data, index_returns)
