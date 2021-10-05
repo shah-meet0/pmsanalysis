@@ -69,13 +69,16 @@ def make_wealth_indexes(index_returns, est_returns):
     joint_wealth.sort_index(inplace=True)
     return joint_wealth
 
+
 def on_manager_selection(manager_selected, _analysed_data, _monthly_data, index_returns, interpretation_flag):
     st.title(manager_selected)
     manager_brief = _analysed_data.loc[manager_selected]
-    manager_brief = manager_brief.rename({'Ann_Ret': 'Annualized Return', 'Ann_Vol': 'Annualized Volatility',
+    manager_brief = manager_brief.rename({'Ann_Ret': 'Annualized Return %', 'Ann_Vol': 'Annualized Volatility %',
                                           'Est_Beta': 'Estimated Beta'})
     manager_long = _monthly_data[_monthly_data['Manager Name'] == manager_selected]
     manager_long.reset_index(inplace=True, drop=True)
+    manager_brief['Annualized Return %'] = round(manager_brief['Annualized Return %'] * 100, 2)
+    manager_brief['Annualized Volatility %'] = round(manager_brief['Annualized Volatility %'] * 100, 2)
     st.table(manager_brief)
     if interpretation_flag:
         pass
