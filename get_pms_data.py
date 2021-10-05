@@ -33,7 +33,7 @@ class PmsImporter:
         '''
         entries = []
         num_managers = self.get_manager_length()
-        for manager in range(2, 10): # num_managers+1
+        for manager in range(2, num_managers+1): # num_managers+1
             for year in years:
                 for month in range(1, 13):
                     try:
@@ -165,6 +165,50 @@ class PmsImporter:
         time.sleep(10)
         self.quit()
         return df
+
+    def get_data_for_month_with_list(self, manager_list, month, year):
+        if isinstance(month, str):
+            month = self.months[month]
+        entries = []
+        for manager in manager_list:
+            try:
+                manager_select = Select(self.driver.find_element_by_xpath("//*[@id='2']/div[1]/select"))
+                manager_select.select_by_visible_text(manager)
+                manager_name = manager_select.first_selected_option.text
+
+                year_select = Select(self.driver.find_element_by_xpath('//*[@id="2"]/div[2]/select'))
+                year_select.select_by_value(str(year))
+
+                month_select = Select(self.driver.find_element_by_xpath('//*[@id="2"]/div[3]/select'))
+                month_select.select_by_value(str(month))
+                month_name = month_select.first_selected_option.text
+
+                go_button = self.driver.find_element_by_xpath('//*[@id="2"]/div[4]/div/a')
+                go_button.click()
+                data_tuple = self.get_data(year, month)
+                new_entry = [manager_name, int(year), month_name, *data_tuple]
+                entries.append(new_entry)
+
+            except self.NoRecordFoundException as e:
+                print(manager_name, str(year), month_name, e)
+
+            except selenium.common.exceptions.NoSuchElementException:
+                print(str(manager), str(year), str(month), 'failed to load or does not have all data.')
+                self.driver.refresh()
+                self.driver.get(self.website)
+
+            except Exception:
+                # Sometimes page won't load because of buggy website, this handler will print out
+                # when you might need to manually add a couple of entries.
+                self.driver.refresh()
+                self.driver.get(self.website)
+                print(str(manager), str(month), 'had to be refreshed')
+        df = pd.DataFrame(data=entries, columns=['Manager Name', 'Year', 'Month', 'AUM (crs)',
+                                                 'Turnover Ratio', 'Return'])
+        time.sleep(10)
+        self.quit()
+        return df
+
 
     def get_manager_length(self):
         self.driver.get(self.website)

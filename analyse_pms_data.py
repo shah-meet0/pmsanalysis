@@ -156,13 +156,13 @@ class PmsReformater:
         df['Date'] = pd.to_datetime(df['Date'], format=from_format)
         df['Date'] = df['Date'].apply(lambda date: datetime.strftime(date, to_format))
 
-    def reformat_data_csv(self, from_format, to_format):
+    def reformat_data_csv(self):
         self.df['Month'] = self.df['Month'].apply(PmsReformater.change_month_format)
         self.df['Date'] = pd.to_datetime(100 * self.df['Year'] + self.df['Month'], format='%Y%m') + MonthEnd(1)
         self.df.set_index('Date', inplace=True, drop=False)
         self.df.drop(columns=['Unnamed: 0', 'Year', 'Month'], inplace=True)
         self.df = self.df.sort_index()
-        PmsReformater.change_date_format(self.df, from_format, to_format)
+        PmsReformater.change_date_format(self.df, '%Y-%m-%d', '%B %Y')
         return self.df
 
     def print_csv(self, filepath):

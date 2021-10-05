@@ -111,3 +111,7 @@ def get_beta_estimate(returns: pd.Series, index_returns: pd.Series, rf, include_
 def normalize(series: pd.Series):
     norm_series = (series - mean(series))/standard_deviation(series)
     return norm_series
+
+
+def give_st_description(manager_brief):
+    pass
