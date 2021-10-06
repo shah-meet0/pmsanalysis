@@ -123,15 +123,30 @@ def give_st_description(manager_brief):
 
 
 def _skewness_interpretation(given_skewness):
-    pass
+    if given_skewness < -0.5:
+        return 'Placeholder skewness neg string'
+    elif given_skewness > 0.5:
+        return 'Placeholder skewness pos string'
+    else:
+        return 'Place holder skewness neutral string'
 
 
 def _kurtosis_interpretation(given_kurtosis):
-    pass
+    if given_kurtosis < 2:
+        return 'Placeholder kurtosis neg string'
+    elif given_kurtosis > 5:
+        return 'Placeholder kurtosis pos string'
+    else:
+        return 'Place holder kurtosis neutral string'
 
 
 def _beta_interpretation(given_beta):
-    pass
+    if given_beta < -0.3:
+        return 'neg beta string'
+    elif given_beta > 0.3:
+        return 'pos beta string'
+    else:
+        return 'neutral beta string'
 
 
 def _sharpe_ratio_interpretation(given_sharpe_ratio):
