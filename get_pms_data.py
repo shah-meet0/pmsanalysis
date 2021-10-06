@@ -138,7 +138,7 @@ class PmsImporter:
 
     def get_data_for_year(self, manager, year):
         entries = []
-        for month in range(1, 13):
+        for month in range(0, 13):  # some bug here requires starting at 0, not very important.
             try:
                 if isinstance(manager, str):
                     new_entry = self.select_and_get_data(manager, year, month, True)
@@ -172,28 +172,14 @@ class PmsImporter:
         entries = []
         for manager in manager_list:
             try:
-                manager_select = Select(self.driver.find_element_by_xpath("//*[@id='2']/div[1]/select"))
-                manager_select.select_by_visible_text(manager)
-                manager_name = manager_select.first_selected_option.text
-
-                year_select = Select(self.driver.find_element_by_xpath('//*[@id="2"]/div[2]/select'))
-                year_select.select_by_value(str(year))
-
-                month_select = Select(self.driver.find_element_by_xpath('//*[@id="2"]/div[3]/select'))
-                month_select.select_by_value(str(month))
-                month_name = month_select.first_selected_option.text
-
-                go_button = self.driver.find_element_by_xpath('//*[@id="2"]/div[4]/div/a')
-                go_button.click()
-                data_tuple = self.get_data(year, month)
-                new_entry = [manager_name, int(year), month_name, *data_tuple]
+                new_entry = self.select_and_get_data(manager, year, month, True)
                 entries.append(new_entry)
 
             except self.NoRecordFoundException as e:
-                print(manager_name, str(year), month_name, e)
+                print(manager, year, month, e)
 
             except selenium.common.exceptions.NoSuchElementException:
-                print(str(manager), str(year), str(month), 'failed to load or does not have all data.')
+                print(manager, year, month, 'failed to load or does not have all data.')
                 self.driver.refresh()
                 self.driver.get(self.website)
 
@@ -208,7 +194,6 @@ class PmsImporter:
         time.sleep(10)
         self.quit()
         return df
-
 
     def get_manager_length(self):
         self.driver.get(self.website)
@@ -249,8 +234,7 @@ class PmsImporter:
         new_entry = [manager_name, int(year), month_name, *data_tuple]
         return new_entry
 
-
-    def get_entry(self, manager: int, year, month, **kwargs):
+    def get_entry(self, manager: int, year, month, **kwargs): # A bit redundant, might want to remove
         self.driver.get(self.website)
         if isinstance(month, str):
             month = self.months[month]
