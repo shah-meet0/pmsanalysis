@@ -114,4 +114,25 @@ def normalize(series: pd.Series):
 
 
 def give_st_description(manager_brief):
+    manager_skewness = manager_brief.loc['Skewness']
+    manager_kurtosis = manager_brief.loc['Kurtosis']
+    manager_beta = manager_brief.loc['Estimated Beta']
+    manager_sharpe_ratio = manager_brief.loc['Sharpe Ratio']
+
+# Next functions are specific to managers, and will provide interpretation only when used for that purpose.
+
+
+def _skewness_interpretation(given_skewness):
+    pass
+
+
+def _kurtosis_interpretation(given_kurtosis):
+    pass
+
+
+def _beta_interpretation(given_beta):
+    pass
+
+
+def _sharpe_ratio_interpretation(given_sharpe_ratio):
     pass
