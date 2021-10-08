@@ -1,5 +1,5 @@
 # pmsanalysis
-##Website
+## Website
 https://pms-analysis.herokuapp.com
 
 ## Purpose
@@ -18,4 +18,4 @@ takes into account discretionary Portfolio Management Services, where all the de
 * [update_month.py](./update_month.py): Contains a routine to update the entire database each month when new data is reported.
 * [risk_measures.py](./risk_measures.py): Contains functions to get summary statistics like annualized mean, volatility, skewness, kurtosis and other methods like the ordinary least squares. 
 * [pmsstreamlit.py](./pmsstreamlit.py): Uses streamlit to construct a webapp to display the analysed data. 
-* The other files are used to deploy the streamlit webapp onto [Heroku](https://www.heroku.com/what)
+* The other files are used to deploy the streamlit webapp onto [Heroku](https://www.heroku.com/what).
