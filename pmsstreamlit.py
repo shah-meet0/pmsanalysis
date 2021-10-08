@@ -70,16 +70,17 @@ def make_wealth_indexes(index_returns, est_returns):
     joint_wealth.sort_index(inplace=True)
     return joint_wealth
 
-
+@st.cache
 def give_full_description(manager_brief, manager_long):
     average_monthly_return = round(manager_long['Return'].mean() * 100,2)
     manager_skewness = manager_brief.loc['Skewness']
     manager_kurtosis = manager_brief.loc['Kurtosis']
     manager_beta = manager_brief.loc['Estimated Beta']
-    st.write(f'The manager has an average monthly return of {average_monthly_return} %')
-    st.write(rm._skewness_interpretation(manager_skewness))
-    st.write(rm._kurtosis_interpretation(manager_kurtosis))
-    st.write(rm._beta_interpretation(manager_beta))
+    monthly_return_string = f'The manager has an average monthly return of {average_monthly_return} %'
+    skewness_string = rm._skewness_interpretation(manager_skewness)
+    kurtosis_string = rm._kurtosis_interpretation(manager_kurtosis)
+    beta_string = rm._beta_interpretation(manager_beta)
+    return monthly_return_string, skewness_string, kurtosis_string, beta_string
 
 
 def on_manager_selection(manager_selected, _analysed_data, _monthly_data, index_returns, interpretation_flag):
@@ -93,7 +94,12 @@ def on_manager_selection(manager_selected, _analysed_data, _monthly_data, index_
     manager_brief['Annualized Volatility %'] = round(manager_brief['Annualized Volatility %'] * 100, 2)
     st.table(manager_brief)
     if interpretation_flag:
-        give_full_description(manager_brief, manager_long)
+        mrs, ss, ks, bs = give_full_description(manager_brief, manager_long)
+        st.write(mrs)  # Monthly_return_string
+        st.write(ss)  # Skewness_string
+        st.write(ks)  # Kurtosis_string
+        st.write(bs)  # Beta_string
+
     manager_beta = manager_brief['Estimated Beta']
     missing_dates = missing_dates_df.loc[manager]['Missing Dates']
     est_returns = estimate_missing_dates(manager_long, missing_dates, index_returns, manager_beta)
