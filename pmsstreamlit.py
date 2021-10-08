@@ -4,6 +4,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import analyse_pms_data as apd
+import risk_measures as rm
 from pandas.tseries.offsets import MonthEnd
 import matplotlib.dates as mdates
 from datetime import date
@@ -70,6 +71,17 @@ def make_wealth_indexes(index_returns, est_returns):
     return joint_wealth
 
 
+def give_full_description(manager_brief, manager_long):
+    average_monthly_return = round(manager_long['Return'].mean() * 100,2)
+    manager_skewness = manager_brief.loc['Skewness']
+    manager_kurtosis = manager_brief.loc['Kurtosis']
+    manager_beta = manager_brief.loc['Estimated Beta']
+    st.write(f'The manager has an average monthly return of {average_monthly_return} %')
+    st.write(rm._skewness_interpretation(manager_skewness))
+    st.write(rm._kurtosis_interpretation(manager_kurtosis))
+    st.write(rm._beta_interpretation(manager_beta))
+
+
 def on_manager_selection(manager_selected, _analysed_data, _monthly_data, index_returns, interpretation_flag):
     st.title(manager_selected)
     manager_brief = _analysed_data.loc[manager_selected]
@@ -81,7 +93,7 @@ def on_manager_selection(manager_selected, _analysed_data, _monthly_data, index_
     manager_brief['Annualized Volatility %'] = round(manager_brief['Annualized Volatility %'] * 100, 2)
     st.table(manager_brief)
     if interpretation_flag:
-        pass
+        give_full_description(manager_brief, manager_long)
     manager_beta = manager_brief['Estimated Beta']
     missing_dates = missing_dates_df.loc[manager]['Missing Dates']
     est_returns = estimate_missing_dates(manager_long, missing_dates, index_returns, manager_beta)
@@ -197,5 +209,5 @@ if manager == 'All':
         st.pyplot(fig)
 
 else:
-    interpretation_flag = True  # st.sidebar.checkbox(label='Parameter Explanation (WIP)')
+    interpretation_flag = st.sidebar.checkbox(label='Detailed Explanation')
     on_manager_selection(manager, analysed_data, monthly_data, index_returns, interpretation_flag)
