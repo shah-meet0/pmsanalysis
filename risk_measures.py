@@ -142,7 +142,7 @@ def _kurtosis_interpretation(given_kurtosis):
         return 'The distribution of the average monthly returns for this manager is **leptokurtic**. This implies that ' \
                'the manager tends to have returns which are quite distant from their average monthly return. ' \
                'One can expect there to be extremely above or below average returns, depending on the skewness. ' \
-               'Note that because of the sample size and Covid-19 pandemic, many managers will show leptokurtic returns' \
+               'Note that because of the sample size and Covid-19 pandemic, many managers will show leptokurtic returns ' \
                'although it might not be indicative of their general performance.'
     else:
         return 'The distribution of the average monthly returns for this manager is **mesokurtic**. This implies that ' \
