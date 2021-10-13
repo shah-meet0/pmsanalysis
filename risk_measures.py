@@ -158,7 +158,7 @@ def _beta_interpretation(given_beta):
                'returns' \
                'in recession like market conditions, and act as a good way to lower portfolio systematic risk. '
     elif given_beta > 0.3:
-        if given_beta > 1:
+        if given_beta > 1.1:
             return 'This manager has a **positive**  market beta. This implies that their return ' \
                    'is positively correlated with the return of the Nifty 500. Typically, these managers have ' \
                    'positive ' \
@@ -166,13 +166,20 @@ def _beta_interpretation(given_beta):
                    'they beat' \
                    'the market when it rises, but also that they typically tend to have lower returns than the market ' \
                    'when it falls.'
-        else:
+        elif given_beta < 0.9:
             return 'This manager has a **positive** beta coefficient. This implies that their return ' \
                    'is positively correlated with the return of the Nifty 500. Typically, these managers have ' \
                    'positive ' \
                    'returns when the market is booming, This manager has a beta smaller than one, which means that ' \
                    'they rise less than the market but also are less risky because they tend to fall less than the ' \
                    'market as well.'
+        else:
+            return 'This manager has a **positive** beta coefficient. This implies that their return ' \
+                   'is positively correlated with the return of the Nifty 500. Typically, these managers have ' \
+                   'positive ' \
+                   'returns when the market is booming, This manager has a beta close to one, which means that ' \
+                   'their returns are very similar to the index. These managers have a systemic risk close to that' \
+                   ' of the index, an are about as risky.'
     else:
         return 'This manager has a relatively low correlation with the Nifty 500 index. Thus, their monthly returns ' \
                'are not influenced too much by the overarching business cycle, which can make them relatively stable ' \
