@@ -4,8 +4,6 @@ from pandas.tseries.offsets import MonthEnd
 import risk_measures as rm
 
 
-# TODO: needs documentation
-
 class PmsAnalyser:
 
     def __init__(self, filepath):
@@ -34,7 +32,7 @@ class PmsAnalyser:
         :param risk_free_rate: risk_free_rate estimate (annualized), and not in percent
         :return: dictionary containing manager name and estimated CAPM beta
         """
-        monthly_risk_free_rate = (1 + risk_free_rate) ** (1/12) - 1
+        monthly_risk_free_rate = (1 + risk_free_rate) ** (1 / 12) - 1
         index_returns = pd.read_csv(filepath_to_index_returns)
         index_returns['Date'] = pd.to_datetime(index_returns['Date']) + MonthEnd(1)
         index_returns.set_index('Date', inplace=True)
@@ -54,7 +52,11 @@ class PmsAnalyser:
         manager_df.dropna(inplace=True)
         return manager_df
 
-    def get_analysed_df(self, filepath_to_index_returns):
+    def get_analysed_df(self, filepath_to_index_returns: str) -> pd.DataFrame:
+        '''
+        Gives Annualized Return, Annualized Volatility, Skewness, Kurtosis, Estimated Beta and Sharpe Ratio for
+        each manager.
+        '''
         entries = []
         columns = ['Manager Name', 'Entries', 'Annualized Return', 'Annualized Volatility', 'Skewness', 'Kurtosis',
                    'Estimated Beta', 'Sharpe Ratio']
@@ -76,7 +78,6 @@ class PmsAnalyser:
 
         analysed_df = pd.DataFrame(data=entries, columns=columns)
         return analysed_df
-
 
 
 class PmsCleaner:
