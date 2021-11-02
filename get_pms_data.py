@@ -71,6 +71,16 @@ class PmsImporter:
         return df
 
     def get_all_data_from_list(self, manager_list, years, filepath):
+        '''
+        Gets data for a particular list of managers for a particular number of years. Useful when wanting to collect
+        data for only a subset of managers.
+
+        :param manager_list: Array of managers with names according to their names on SEBI website
+        :param years: Years for which data is wanted
+        :param filepath: filepath to which the data should be saved
+        :return: DataFrame containing the data for the manager list in the years.
+        '''
+
         entries = []
         for manager in manager_list:
             for year in years:
@@ -107,6 +117,13 @@ class PmsImporter:
         return df
 
     def get_data_for_month(self, month, year):
+        '''
+        gets data for all managers for a particular month in a particular year.
+
+        :param month: Month for which data is wanted. ('December' or 12 both work).
+        :param year: Year for which data is wanted.
+        :return: DataFrame containing the required data.
+        '''
         if isinstance(month, str):
             month = self.months[month]
         entries = []
@@ -137,6 +154,13 @@ class PmsImporter:
         return df
 
     def get_data_for_year(self, manager, year):
+        '''
+        Get data for a particular manager for a particular year.
+
+        :param manager: Name or id of manager whose data is wanted.
+        :param year: Year for which the data is wanted.
+        :return: DataFrame containing the required data.
+        '''
         entries = []
         for month in range(0, 13):  # some bug here requires starting at 0, not very important.
             try:
@@ -167,6 +191,13 @@ class PmsImporter:
         return df
 
     def get_data_for_month_with_list(self, manager_list, month, year):
+        '''
+
+        :param manager_list: List of managers, with names as on the SEBI website or in manager_id.csv
+        :param month: Month of collection of data.
+        :param year: Year of collection of data.
+        :return: DataFrame containing the required data.
+        '''
         if isinstance(month, str):
             month = self.months[month]
         entries = []
