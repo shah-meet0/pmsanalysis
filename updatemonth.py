@@ -11,11 +11,11 @@ from pandas.tseries.offsets import MonthEnd
 
 def get_manager_list_and_last_month(filepath_to_current_data):
     current_data = pd.read_csv(filepath_to_current_data)
-    manager_list = current_data['Manager'].unique()
+    manager_list = current_data['Manager Name'].unique()
     current_data['Date'] = pd.to_datetime(current_data['Date'], format='%B %Y') + MonthEnd(1)
     current_data.set_index('Date', inplace=True)
     current_data.sort_index(inplace=True)
-    last_month = current_data.last_valid_index.month
+    last_month = current_data.last_valid_index().month
     return manager_list, last_month
 
 
