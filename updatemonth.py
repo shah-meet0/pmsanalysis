@@ -1,7 +1,7 @@
 # This script can be used to update the data base. Will require changes in streamlit code
 # Can make streamlit auto update, but for now doing it manually so backups are preserved in case
 # Sebi changes some stuff.
-# uses only obtained data.
+# uses only obtained data
 
 import pandas as pd
 import get_pms_data as gpd
@@ -29,15 +29,15 @@ def get_data_for_month(manager_list, month, year, driver_loc, filepath_to_save):
 def format_manager_data(location_of_new_data):
     reformatter = apd.PmsReformater(location_of_new_data)
     reformatter.reformat_data_csv()
-    reformatter.df.drop('Date', inplace=True)
+    reformatter.df.set_index('Date', inplace=True)
     return reformatter.df
 
 
 def add_to_orig_data(filepath_to_current_data, reformatted_df):
     current_data = pd.read_csv(filepath_to_current_data)
-    current_data['Date'] = pd.to_datetime(current_data['Date'], format='%B %Y') + MonthEnd(1)
     current_data.set_index('Date', inplace=True)
-    final_df = pd.merge(current_data, reformatted_df, left_index=True, right_index=True, how='outer')
+    final_df = pd.concat([current_data, reformatted_df])
+
     return final_df
 
 
@@ -51,7 +51,7 @@ def update_routine(filepath_to_current_data, filepath_to_index_returns, driver_l
     if infer_month:
         month = last_month + 1
     filepath_to_save = f'./Updates/raw_data_{year}_{month}.csv'
-    get_data_for_month(manager_list, month, year, driver_loc, filepath_to_save)
+    # get_data_for_month(manager_list, month, year, driver_loc, filepath_to_save)
     reformatted_data = format_manager_data(filepath_to_save)
     merged_df = add_to_orig_data(filepath_to_current_data, reformatted_data)
     filepath_to_final_data = f'./Updates/combined_data_{year}_{month}.csv'
