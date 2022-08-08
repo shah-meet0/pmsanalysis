@@ -1,7 +1,7 @@
 # This script can be used to update the data base. Will require changes in streamlit code
 # Can make streamlit auto update, but for now doing it manually so backups are preserved in case
 # Sebi changes some stuff.
-# uses only obtained data
+# uses only obtained data.
 
 import pandas as pd
 import get_pms_data as gpd
