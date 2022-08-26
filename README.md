@@ -1,6 +1,5 @@
 # pmsanalysis
-## Website
-https://pms-analysis.herokuapp.com
+## [Website](https://shah-meet0-pmsanalysis-pmsstreamlit-76h3jn.streamlitapp.com/)
 
 ## Purpose
 The purpose of this project is to assimilate, analyse and present data on Portfolio Management Services in India. Portfolio Management Services are investment instruments
@@ -18,4 +17,4 @@ takes into account discretionary Portfolio Management Services, where all the de
 * [updatemonth.py](./updatemonth.py): Contains a routine to update the entire database each month when new data is reported.
 * [risk_measures.py](./risk_measures.py): Contains functions to get summary statistics like annualized mean, volatility, skewness, kurtosis and other methods like the ordinary least squares. 
 * [pmsstreamlit.py](./pmsstreamlit.py): Uses streamlit to construct a webapp to display the analysed data. 
-* The other files are used to deploy the streamlit webapp onto [Heroku](https://www.heroku.com/what).
+
