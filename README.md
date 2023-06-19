@@ -1,5 +1,5 @@
 # pmsanalysis
-## [Website](https://shah-meet0-pmsanalysis-pmsstreamlit-76h3jn.streamlitapp.com/)
+## [Website](https://pms-data.streamlit.app/)
 
 ## Purpose
 The purpose of this project is to assimilate, analyse and present data on Portfolio Management Services in India. Portfolio Management Services are investment instruments
