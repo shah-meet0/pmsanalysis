@@ -61,7 +61,7 @@ def make_wealth_indexes(index_returns, est_returns):
     entries = []
     index_wealth = 1000
     pms_wealth = 1000
-    for index, ret in est_returns.iteritems():
+    for index, ret in est_returns.items():
         index_wealth *= (index_returns[index] + 1)
         pms_wealth *= (ret + 1)
         entries.append([index, index_wealth, pms_wealth])
